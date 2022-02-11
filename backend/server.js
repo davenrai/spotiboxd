@@ -8,7 +8,13 @@ app.use(express.json());
 app.use(cors());
 const SpotifyWebApi = require("spotify-web-api-node");
 
-const spotifyApi = new SpotifyWebApi(/* credentials */);
+let credentials = {
+  redirectUri: "http://localhost:3000",
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+};
+
+const spotifyApi = new SpotifyWebApi(credentials);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -16,13 +22,15 @@ app.get("/", (req, res) => {
 
 // app login
 app.get("/login", (req, res) => {
+  console.log("hello");
   let state = generateRandomString(16);
-  let scopes = "user-read-private user-read-email";
+  let scopes = ["user-read-private user-read-email"];
   let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+  console.log(authorizeURL);
   res.redirect(authorizeURL);
 });
 
-// app callback
+// app callback route!
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

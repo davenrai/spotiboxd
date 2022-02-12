@@ -9,7 +9,7 @@ app.use(cors());
 const SpotifyWebApi = require("spotify-web-api-node");
 
 let credentials = {
-  redirectUri: "http://localhost:3000",
+  redirectUri: "http://localhost:4000/callback",
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
 };
@@ -31,6 +31,27 @@ app.get("/login", (req, res) => {
 });
 
 // app callback route!
+
+app.get("/callback", (req, res) => {
+  let { code, state } = req.query;
+  if (code && state) {
+    spotifyApi
+      .authorizationCodeGrant(code)
+      .then((data) => {
+        let accessToken = data.body["access_token"];
+        let refreshToken = data.body["refresh_token"];
+        spotifyApi.setAccessToken(accessToken);
+        spotifyApi.setRefreshToken(refreshToken);
+        console.log("Access/Refresh Token Set.");
+        const params = new URLSearchParams({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
+        res.redirect(`/${params.toString()}`);
+      })
+      .catch((err) => console.log("Error occured authorizing code."));
+  }
+});
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

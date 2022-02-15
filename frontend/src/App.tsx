@@ -1,4 +1,5 @@
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 // import { Link, Route, Routes, useSearchParams } from "react-router-dom";
 

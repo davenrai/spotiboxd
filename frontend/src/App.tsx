@@ -1,15 +1,18 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
-// import { Link, Route, Routes, useSearchParams } from "react-router-dom";
-
-const userSpotifyCode = new URLSearchParams(window.location.search).get("code");
+import Dashboard from "./components/Dashboard";
+import { SpotifyUserContext } from "./context/SpotifyAuthContext";
+import { useContext, useEffect } from "react";
+import SpotifyWebApi from "spotify-web-api-node";
 
 function App() {
+  const { auth } = useContext(SpotifyUserContext);
   return (
-    <div className="">
-      <h1>Welcome to Spotiboxd!</h1>
-      {userSpotifyCode ? <div>{userSpotifyCode}</div> : <Login />}
+    <div
+      style={{ textAlign: "center", backgroundColor: "black", height: "100vh" }}
+    >
+      {auth?.accessToken ? <Dashboard auth={auth} /> : <Login />}
     </div>
   );
 }

@@ -8,6 +8,9 @@ app.use(express.json());
 app.use(cors());
 const SpotifyWebApi = require("spotify-web-api-node");
 
+// const CLIENT_ID = process.env.CLIENT_ID;
+// const CLIENT_SECRET = process.env.CLIENT_SECRET;
+
 let credentials = {
   redirectUri: "http://localhost:4000/callback",
   clientId: process.env.CLIENT_ID,
@@ -34,7 +37,7 @@ app.get("/", (req, res) => {
 // app login
 app.get("/login", (req, res) => {
   let state = generateRandomString(16);
-  let scopes = ["user-read-private user-read-email"];
+  let scopes = ["user-read-private user-read-email user-library-read"];
   let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   console.log(authorizeURL);
   res.redirect(authorizeURL);
@@ -64,12 +67,32 @@ app.get("/callback", (req, res) => {
         //   refreshToken: refreshToken,
         // });
         //spotifyApi.getMe().then(({ body }) => console.log(body));
-        res.redirect(
-          `http://localhost:3000/user/${accessToken}/${refreshToken}/${expiresIn}`
-        );
+        const params = new URLSearchParams({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          expiresIn: expiresIn,
+        });
+        res.redirect(`http://localhost:3000/?${params}`);
       })
-      .catch((err) => console.log("Error occured authorizing code."));
+      .catch((err) => console.log("Error occured authorizing code.", err));
   }
+});
+
+app.post("/refreshToken", (req, res) => {
+  const refreshToken = req.body.refreshToken;
+  spotifyApi
+    .refreshAccessToken({ ...credentials, refreshToken })
+    .then((data) => {
+      console.log(" The access token has been refreshed.");
+
+      res.json({
+        accessToken: data.body["access_token"],
+        expiresIn: data.body["expires_in"],
+      });
+    })
+    .catch((err) => {
+      console.log("Error refreshing token ", err);
+    });
 });
 
 app.listen(port, () => {

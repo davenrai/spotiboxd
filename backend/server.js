@@ -37,6 +37,7 @@ app.get("/", (req, res) => {
 // app login
 app.get("/login", (req, res) => {
   let state = generateRandomString(16);
+  res.cookie("STATE_KEY", state);
   let scopes = ["user-read-private user-read-email user-library-read"];
   let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   console.log(authorizeURL);
@@ -45,6 +46,7 @@ app.get("/login", (req, res) => {
 
 app.get("/callback", (req, res) => {
   let { code, state } = req.query;
+  // handle state from req.cookie
   if (code && state) {
     spotifyApi
       .authorizationCodeGrant(code)
@@ -80,8 +82,11 @@ app.get("/callback", (req, res) => {
 
 app.post("/refreshToken", (req, res) => {
   const refreshToken = req.body.refreshToken;
+  console.log("RECEIVED REFRESH TOKEN", refreshToken);
+  if (!refreshToken) return;
+  spotifyApi.setRefreshToken(refreshToken);
   spotifyApi
-    .refreshAccessToken({ ...credentials, refreshToken })
+    .refreshAccessToken()
     .then((data) => {
       console.log(" The access token has been refreshed.");
 

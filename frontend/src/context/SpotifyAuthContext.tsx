@@ -4,7 +4,10 @@ import SpotifyWebApi from "spotify-web-api-node";
 import { getTokenParams } from "../util/auth";
 
 export type GlobalContent = {
-  auth?: any;
+  accessToken?: any;
+  refreshToken?: any;
+  expiresAt?: number;
+  api?: any;
   setAuthData?(data: any): void;
 };
 
@@ -22,16 +25,16 @@ export const SpotifyAuthProvider = (props: {
   const setAuthData = (data: any) => {
     setAuth(data);
   };
-  const authContextValue = { auth, setAuthData };
+  const authContextValue = { ...auth, setAuthData };
   const params = new URLSearchParams(window.location.search);
-
+  let spotifyApi = new SpotifyWebApi({
+    clientId: "327623f8bf6c4fb399f6261e14847497",
+  });
   // Set token info from local storage to context
   useEffect(() => {
     try {
       let data = JSON.parse(window?.localStorage?.getItem("auth")) ?? null;
-      let spotifyApi = new SpotifyWebApi({
-        clientId: "327623f8bf6c4fb399f6261e14847497",
-      });
+      if (!data) return;
       if (data && Date.now() < data.expiresAt) {
         spotifyApi.setCredentials({
           accessToken: data.accessToken,
@@ -40,8 +43,9 @@ export const SpotifyAuthProvider = (props: {
         setAuthData({ ...data, api: spotifyApi });
       } else {
         let oldAuth = JSON.parse(window.localStorage.getItem("auth"));
-        let { refreshToken }: { refreshToken: string } = oldAuth;
-        window?.localStorage?.removeItem("auth");
+        if (!oldAuth) return;
+        let { refreshToken } = oldAuth;
+        if (!refreshToken) return;
         axios
           .post("http://localhost:4000/refreshToken", {
             refreshToken: refreshToken,
@@ -52,7 +56,13 @@ export const SpotifyAuthProvider = (props: {
               accessToken,
               expiresIn,
             }: { accessToken: string; expiresIn: string } = res.data;
-            window.localStorage.removeItem("auth");
+            spotifyApi.setAccessToken(accessToken);
+            setAuthData({
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              expiresAt: Date.now() + parseInt(expiresIn) * 1000,
+              api: spotifyApi,
+            });
             window.localStorage.setItem(
               "auth",
               JSON.stringify({
@@ -69,16 +79,10 @@ export const SpotifyAuthProvider = (props: {
   }, []);
   useEffect(() => {
     if (params && !auth) {
-      // setAccessToken(params?.accessToken);
-      // setExpiresAt(Date.now() + params?.expiresIn);
       const tokenInfo = getTokenParams(params);
       window.history.pushState({}, null, "/");
       if (tokenInfo === null) return;
-      // const tokenInfo = {
-      //   accessToken: params.get("accessToken"),
-      //   refreshToken: params.get("refreshToken"),
-      //   expiresAt: Date.now() + params.get("expiresIn"),
-      // };
+
       setAuthData(tokenInfo);
     }
   }, [params]);

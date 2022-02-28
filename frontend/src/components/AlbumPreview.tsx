@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 
-export default function AlbumPreview({ albums, setSelectedAlbum }) {
+export default function AlbumPreview({
+  albums,
+  setSelectedAlbum,
+  handlePagination,
+}) {
   if (!albums) {
     return <div>Loading...</div>;
   }
@@ -17,8 +21,8 @@ export default function AlbumPreview({ albums, setSelectedAlbum }) {
           justifyContent: "space-evenly",
         }}
       >
-        {albums?.map((a) => {
-          let album = a.album;
+        {albums?.map((album) => {
+          // let album = a.album;
           let id = album.id;
 
           return (
@@ -31,7 +35,6 @@ export default function AlbumPreview({ albums, setSelectedAlbum }) {
               <Card.Body>
                 <Card.Title>{album.name}</Card.Title>
                 <Card.Text>{album.artists[0].name}</Card.Text>
-                {/* <Button variant="primary">Go somewhere</Button> */}
               </Card.Body>
             </Card>
           );
@@ -41,18 +44,18 @@ export default function AlbumPreview({ albums, setSelectedAlbum }) {
         <Button
           variant="secondary"
           className="mx-auto my-auto"
-          // onClick={() => {
-          //   handlePagination("previous");
-          // }}
+          onClick={() => {
+            handlePagination("previous");
+          }}
         >
           Previous
         </Button>
         <Button
           variant="secondary"
           className="mx-auto my-auto"
-          // onClick={() => {
-          //   handlePagination("next");
-          // }}
+          onClick={() => {
+            handlePagination("next");
+          }}
         >
           Next
         </Button>

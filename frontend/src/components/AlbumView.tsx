@@ -7,7 +7,7 @@ const LIMIT = 10;
 export default function AlbumView({ api: spotifyApi }) {
   const [userSavedAlbums, setUserSavedAlbums] = useState<any>(null);
   const [searchedAlbums, setSearchedAlbums] = useState<any>(null);
-  const [albumSearch, setAlbumSearch] = useState<string>(null);
+  const [searchTerm, setSearchTerm] = useState<string>(null);
   const [selectedAlbum, setSelectedAlbum] = useState<any>(null);
   // pass auth here as props so it's not happening in dashboard.
   // use UseEffect to call user's saved albums
@@ -23,8 +23,9 @@ export default function AlbumView({ api: spotifyApi }) {
       .then((data) => {
         console.log(data);
         let { items, next, previous, limit, offset, total } = data.body;
+        let albums = data.body.items.map((a) => a.album);
         setUserSavedAlbums({
-          albums: items,
+          albums: albums,
           next: next,
           previous: previous,
           limit: limit,
@@ -36,9 +37,9 @@ export default function AlbumView({ api: spotifyApi }) {
   }, [spotifyApi]);
 
   useEffect(() => {
-    if (!albumSearch) return;
+    if (!searchTerm) return;
     spotifyApi
-      .searchAlbums(albumSearch, { limit: 10, offset: 0 })
+      .searchAlbums(searchTerm, { limit: 10, offset: 0 })
       .then((data) => {
         console.log(data.body);
         setSearchedAlbums({
@@ -47,7 +48,7 @@ export default function AlbumView({ api: spotifyApi }) {
           previous: data.body.albums.previous,
         });
       });
-  }, [albumSearch]);
+  }, [searchTerm]);
 
   useEffect(() => {
     if (!userSavedAlbums) {
@@ -89,13 +90,14 @@ export default function AlbumView({ api: spotifyApi }) {
         <Form.Label>Search for an Album</Form.Label>
         <Form.Control
           type="search"
-          onChange={(e) => setAlbumSearch(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Enter an album title here..."
         />
       </Form.Group>
       <AlbumPreview
-        albums={userSavedAlbums?.albums}
+        albums={searchTerm ? searchedAlbums?.albums : userSavedAlbums?.albums}
         setSelectedAlbum={setSelectedAlbum}
+        handlePagination={handlePagination}
       />
     </div>
   );

@@ -1,6 +1,12 @@
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
-
+// spotifyApi.getMyTopArtists()
+//   .then(function(data) {
+//     let topArtists = data.body.items;
+//     console.log(topArtists);
+//   }, function(err) {
+//     console.log('Something went wrong!', err);
+//   });
 export default function Profile({ userDetails }) {
   const {
     display_name: displayName,

@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Container, Stack } from "react-bootstrap";
+import { Container, Form, Button, Card } from "react-bootstrap";
+import AlbumPreview from "./AlbumPreview";
+
+const LIMIT = 10;
 
 export default function AlbumView({ api: spotifyApi }) {
   const [userSavedAlbums, setUserSavedAlbums] = useState<any>(null);
+  const [searchedAlbums, setSearchedAlbums] = useState<any>(null);
+  const [albumSearch, setAlbumSearch] = useState<string>(null);
+  const [selectedAlbum, setSelectedAlbum] = useState<any>(null);
   // pass auth here as props so it's not happening in dashboard.
   // use UseEffect to call user's saved albums
 
@@ -13,44 +19,84 @@ export default function AlbumView({ api: spotifyApi }) {
   useEffect(() => {
     if (!spotifyApi) return;
     spotifyApi
-      ?.getMySavedAlbums()
+      ?.getMySavedAlbums({ limit: LIMIT, offset: 0 })
       .then((data) => {
         console.log(data);
+        let { items, next, previous, limit, offset, total } = data.body;
         setUserSavedAlbums({
-          albums: data.body.items,
-          next: data.body.next,
-          previous: data.body.previous,
+          albums: items,
+          next: next,
+          previous: previous,
+          limit: limit,
+          offset: offset,
+          total: total,
         });
       })
       .catch((err) => console.log(err));
   }, [spotifyApi]);
 
-  return (
-    <div
-      className="container"
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        flexDirection: "row",
-        justifyContent: "center",
-      }}
-    >
-      {userSavedAlbums?.albums?.map((a) => {
-        let album = a.album;
-        let id = album.id;
+  useEffect(() => {
+    if (!albumSearch) return;
+    spotifyApi
+      .searchAlbums(albumSearch, { limit: 10, offset: 0 })
+      .then((data) => {
+        console.log(data.body);
+        setSearchedAlbums({
+          albums: data.body.albums.items,
+          next: data.body.albums.next,
+          previous: data.body.albums.previous,
+        });
+      });
+  }, [albumSearch]);
 
-        return (
-          <div
-            className="py-2 w-25 h-30"
-            style={{ border: "1px solid white" }}
-            key={id}
-          >
-            <p>{album.artists[0].name}</p>
-            <img alt={album.name} src={album.images[2].url}></img>
-            <p>{album.name}</p>
-          </div>
-        );
-      })}
+  useEffect(() => {
+    if (!userSavedAlbums) {
+      return;
+    }
+  });
+
+  const handlePagination = (type) => {
+    try {
+      if (userSavedAlbums.offset === 0 && type === "previous") return;
+      spotifyApi
+        ?.getMySavedAlbums({
+          limit: LIMIT,
+          offset:
+            type === "next"
+              ? userSavedAlbums.offset + userSavedAlbums.limit
+              : userSavedAlbums.offset - userSavedAlbums.limit,
+        })
+        .then((data) => {
+          console.log(data);
+          let { items, next, previous, limit, offset } = data.body;
+          setUserSavedAlbums({
+            albums: items,
+            next: next,
+            previous: previous,
+            limit: limit,
+            offset: offset,
+          });
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <div className="my-5">
+      <h1>Selected Album {selectedAlbum}</h1>
+      <Form.Group className="my-3 m-auto w-50" controlId="">
+        <Form.Label>Search for an Album</Form.Label>
+        <Form.Control
+          type="search"
+          onChange={(e) => setAlbumSearch(e.target.value)}
+          placeholder="Enter an album title here..."
+        />
+      </Form.Group>
+      <AlbumPreview
+        albums={userSavedAlbums?.albums}
+        setSelectedAlbum={setSelectedAlbum}
+      />
     </div>
   );
 }

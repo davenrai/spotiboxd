@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
 import SpotifyWebApi from "spotify-web-api-node";
 import { SpotifyUserContext, useAuth } from "../context/SpotifyAuthContext";
 import AlbumView from "./AlbumView";
@@ -24,15 +25,15 @@ export default function Dashboard({ auth }) {
   }, [auth.accessToken]);
 
   return (
-    <div>
+    <div className="h-100">
       {userDetails ? (
-        <div>
+        <div className="">
           <Nav
             avatar={userDetails?.images[0].url}
             name={userDetails?.display_name}
           />
 
-          <Profile userDetails={userDetails} />
+          {/* <Profile userDetails={userDetails} /> */}
           <AlbumView api={spotifyApi} />
         </div>
       ) : (

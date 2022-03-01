@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Container, Form, Button, Card } from "react-bootstrap";
+import AlbumDetails from "./AlbumDetails";
 import AlbumPreview from "./AlbumPreview";
 
 const LIMIT = 10;
@@ -8,7 +9,8 @@ export default function AlbumView({ api: spotifyApi }) {
   const [userSavedAlbums, setUserSavedAlbums] = useState<any>(null);
   const [searchedAlbums, setSearchedAlbums] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState<string>(null);
-  const [selectedAlbum, setSelectedAlbum] = useState<any>(null);
+  const [selectedAlbumId, setSelectedAlbumId] = useState<any>(null);
+  const [selectedAlbumDetails, setSelectedAlbumDetails] = useState<any>(null);
   // pass auth here as props so it's not happening in dashboard.
   // use UseEffect to call user's saved albums
 
@@ -56,6 +58,27 @@ export default function AlbumView({ api: spotifyApi }) {
     }
   });
 
+  useEffect(() => {
+    if (!selectedAlbumId) {
+      return;
+    }
+    spotifyApi.getAlbum(selectedAlbumId).then((data) => {
+      console.log("SELECTED ALBUM", data.body);
+      let { artists, id, images, label, name, release_date, tracks, uri } =
+        data.body;
+      setSelectedAlbumDetails({
+        artists,
+        id,
+        images,
+        label,
+        name,
+        release_date,
+        tracks,
+        uri,
+      });
+    });
+  }, [selectedAlbumId]);
+
   const handlePagination = (type) => {
     try {
       if (userSavedAlbums.offset === 0 && type === "previous") return;
@@ -85,7 +108,16 @@ export default function AlbumView({ api: spotifyApi }) {
 
   return (
     <div className="my-5">
-      <h1>Selected Album {selectedAlbum}</h1>
+      <Container>
+        {selectedAlbumDetails && (
+          <AlbumDetails
+            id={selectedAlbumId}
+            images={selectedAlbumDetails.images}
+            artists={selectedAlbumDetails.artists}
+            tracks={selectedAlbumDetails.tracks}
+          />
+        )}
+      </Container>
       <Form.Group className="my-3 m-auto w-50" controlId="">
         <Form.Label>Search for an Album</Form.Label>
         <Form.Control
@@ -96,7 +128,7 @@ export default function AlbumView({ api: spotifyApi }) {
       </Form.Group>
       <AlbumPreview
         albums={searchTerm ? searchedAlbums?.albums : userSavedAlbums?.albums}
-        setSelectedAlbum={setSelectedAlbum}
+        setSelectedAlbum={setSelectedAlbumId}
         handlePagination={handlePagination}
       />
     </div>

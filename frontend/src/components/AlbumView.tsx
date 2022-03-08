@@ -5,7 +5,7 @@ import AlbumPreview from "./AlbumPreview";
 
 const LIMIT = 10;
 
-export default function AlbumView({ api: spotifyApi }) {
+export default function AlbumView({ api: spotifyApi, userId }) {
   const [userSavedAlbums, setUserSavedAlbums] = useState<any>(null);
   const [searchedAlbums, setSearchedAlbums] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState<string>(null);
@@ -111,6 +111,7 @@ export default function AlbumView({ api: spotifyApi }) {
       <Container>
         {selectedAlbumDetails && (
           <AlbumDetails
+            userId={userId}
             id={selectedAlbumId}
             images={selectedAlbumDetails.images}
             artists={selectedAlbumDetails.artists}

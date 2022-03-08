@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const db = require("./db");
 const app = express();
 const port = 4000;
 
@@ -98,6 +99,45 @@ app.post("/refreshToken", (req, res) => {
     .catch((err) => {
       console.log("Error refreshing token ", err);
     });
+});
+
+app.get("/reviews", (req, res) => {
+  db.query("SELECT * FROM album_reviews", (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(result.rows);
+  });
+});
+
+app.get("/review", (req, res) => {
+  let userId = req.query.user;
+  let albumId = req.query.album;
+
+  db.query(
+    "SELECT * FROM album_reviews WHERE user_id=($1) AND album_id=($2)",
+    [userId, albumId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send(result.rows);
+    }
+  );
+});
+
+app.post("/createReview", (req, res) => {
+  console.log(req.body);
+  db.query(
+    "INSERT INTO album_reviews VALUES ($1, $2, $3)",
+    [req.body.id, req.body.albumId, req.body.review],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send(result);
+    }
+  );
 });
 
 app.listen(port, () => {

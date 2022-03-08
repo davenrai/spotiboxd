@@ -16,6 +16,7 @@
     "express": "^4.17.2",
     "nodemon": "^2.0.15",
     "passport-spotify": "^2.0.0",
+    "pg": "^8.7.3",
     "spotify-web-api-node": "^5.0.2"
   }
 }

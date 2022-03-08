@@ -9,7 +9,6 @@ import Profile from "./Profile";
 export default function Dashboard({ auth }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [userDetails, setUserDetails] = useState(null);
-  const [userSavedAlbums, setUserSavedAlbums] = useState(null);
 
   let spotifyApi = auth.api;
 
@@ -34,7 +33,7 @@ export default function Dashboard({ auth }) {
           />
 
           {/* <Profile userDetails={userDetails} /> */}
-          <AlbumView api={spotifyApi} />
+          <AlbumView api={spotifyApi} userId={userDetails?.id} />
         </div>
       ) : (
         <div>

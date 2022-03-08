@@ -31,6 +31,7 @@ export default function AlbumPreview({
               style={{ width: "14rem", backgroundColor: "black" }}
               onClick={() => setSelectedAlbum(id)}
               border="secondary"
+              className="my-2"
             >
               <Card.Img variant="top" src={album.images[1].url} />
               <Card.Body>

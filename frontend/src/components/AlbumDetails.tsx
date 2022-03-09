@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CardGroup, Form } from "react-bootstrap";
 
 export default function AlbumDetails({ id, images, tracks, artists, userId }) {
-  const [albumReview, setAlbumReview] = useState(null);
+  const [albumReview, setAlbumReview] = useState<string>("");
+  const [uploadMessage, setUploadMessage] = useState<string>("");
 
   useEffect(() => {
-    setAlbumReview(null);
+    setAlbumReview("");
+    setUploadMessage("");
     axios
       .get(`http://localhost:4000/review?user=${userId}&album=${id}`)
       .then((res) => {
@@ -17,7 +19,23 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
   }, [id]);
 
   function handleReviewSubmit(e) {
-    console.log(e.target.value);
+    // send if albumReview to server
+    // setAlbumReview(null)
+    try {
+      if (albumReview) {
+        axios
+          .post("http://localhost:4000/createReview", {
+            id: userId,
+            albumId: id,
+            review: albumReview,
+          })
+          .then((res) => {
+            setUploadMessage("Review saved.");
+          });
+      }
+    } catch {
+      setUploadMessage("Failure");
+    }
   }
 
   return (
@@ -48,7 +66,9 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
               as="textarea"
               rows={10}
               type="review"
-              placeholder={albumReview ? albumReview : "Enter review here.."}
+              placeholder={albumReview ?? "Enter review here.."}
+              onChange={(e) => setAlbumReview(e.target.value)}
+              value={albumReview}
             />
           </Form.Group>
           <Button
@@ -58,6 +78,7 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
           >
             Submit
           </Button>
+          <Form.Text className="text-muted">{uploadMessage}</Form.Text>
         </Card>
       </CardGroup>
     </div>

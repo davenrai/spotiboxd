@@ -52,18 +52,17 @@ export default function AlbumView({ api: spotifyApi, userId }) {
       });
   }, [searchTerm]);
 
-  useEffect(() => {
-    if (!userSavedAlbums) {
-      return;
-    }
-  });
+  // useEffect(() => {
+  //   if (!userSavedAlbums) {
+  //     return;
+  //   }
+  // });
 
   useEffect(() => {
     if (!selectedAlbumId) {
       return;
     }
     spotifyApi.getAlbum(selectedAlbumId).then((data) => {
-      console.log("SELECTED ALBUM", data.body);
       let { artists, id, images, label, name, release_date, tracks, uri } =
         data.body;
       setSelectedAlbumDetails({
@@ -93,8 +92,9 @@ export default function AlbumView({ api: spotifyApi, userId }) {
         .then((data) => {
           console.log(data);
           let { items, next, previous, limit, offset } = data.body;
+          let albums = items.map((item) => item.album);
           setUserSavedAlbums({
-            albums: items,
+            albums: albums,
             next: next,
             previous: previous,
             limit: limit,
@@ -131,6 +131,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
         albums={searchTerm ? searchedAlbums?.albums : userSavedAlbums?.albums}
         setSelectedAlbum={setSelectedAlbumId}
         handlePagination={handlePagination}
+        isUserPreview={!searchTerm}
       />
     </div>
   );

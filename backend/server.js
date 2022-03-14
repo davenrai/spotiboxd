@@ -126,11 +126,24 @@ app.get("/review", (req, res) => {
   );
 });
 
-app.post("/createReview", (req, res) => {
+app.post("/review", (req, res) => {
   console.log(req.body);
   db.query(
     "INSERT INTO album_reviews VALUES ($1, $2, $3)",
     [req.body.id, req.body.albumId, req.body.review],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send(result);
+    }
+  );
+});
+
+app.get("/reviews", (req, res) => {
+  db.query(
+    "SELECT * FROM album_reviews WHERE id = $1",
+    [req.body.id],
     (err, result) => {
       if (err) {
         console.log(err);

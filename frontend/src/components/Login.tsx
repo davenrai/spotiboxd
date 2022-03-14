@@ -4,15 +4,19 @@ import { Container } from "react-bootstrap";
 export default function Login() {
   return (
     <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
+      className="justify-content-center align-items-center m-auto"
+      style={{ position: "relative", top: "30%" }}
     >
-      <a
-        className="btn btn-success btn-lg"
-        href={"http://localhost:4000/login"}
-      >
-        Login with Spotify!
-      </a>
+      <h1>Welcome to Spotiboxd</h1>
+      <div>
+        <img></img>
+        <a
+          className="btn btn-success btn-lg"
+          href={"http://localhost:4000/login"}
+        >
+          Login with Spotify!
+        </a>
+      </div>
     </Container>
   );
 }

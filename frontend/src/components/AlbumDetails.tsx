@@ -24,7 +24,7 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
     try {
       if (albumReview) {
         axios
-          .post("http://localhost:4000/createReview", {
+          .post("http://localhost:4000/review", {
             id: userId,
             albumId: id,
             review: albumReview,
@@ -61,7 +61,7 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
           style={{ backgroundColor: "black", height: "fit-content" }}
         >
           <Form.Group controlId="form.Textarea" style={{ height: "90%" }}>
-            <Form.Label>Review</Form.Label>
+            <Form.Label>Your Review</Form.Label>
             <Form.Control
               as="textarea"
               rows={10}

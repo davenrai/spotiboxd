@@ -129,7 +129,7 @@ app.get("/review", (req, res) => {
 app.post("/review", (req, res) => {
   console.log(req.body);
   db.query(
-    "INSERT INTO album_reviews VALUES ($1, $2, $3)",
+    "INSERT INTO album_reviews VALUES ($1, $2, $3) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3",
     [req.body.id, req.body.albumId, req.body.review],
     (err, result) => {
       if (err) {
@@ -141,9 +141,10 @@ app.post("/review", (req, res) => {
 });
 
 app.get("/reviews", (req, res) => {
+  let userId = req.query.userId;
   db.query(
     "SELECT * FROM album_reviews WHERE id = $1",
-    [req.body.id],
+    [userId],
     (err, result) => {
       if (err) {
         console.log(err);

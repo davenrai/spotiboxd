@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Container, Form, Button, Card } from "react-bootstrap";
 import AlbumDetails from "./AlbumDetails";
 import AlbumPreview from "./AlbumPreview";
+import UserReviews from "./UserReviews";
 
 const LIMIT = 10;
 
@@ -133,6 +134,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
         handlePagination={handlePagination}
         isUserPreview={!searchTerm}
       />
+      <UserReviews userId={userId} setSelectedAlbumId={setSelectedAlbumId} />
     </div>
   );
 }

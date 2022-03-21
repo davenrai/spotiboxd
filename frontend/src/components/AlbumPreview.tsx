@@ -26,7 +26,7 @@ export default function AlbumPreview({
           {albums?.map((album) => {
             // let album = a.album;
             let id = album.id;
-            console.log(album.images);
+
             return (
               <Card
                 key={id}

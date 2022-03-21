@@ -10,7 +10,7 @@ import UserReviews from "./UserReviews";
 export default function Dashboard({ auth }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [userDetails, setUserDetails] = useState(null);
-
+  // const [selectedAlbumId, setSelectedAlbumId] = useState<any>(null);
   let spotifyApi = auth.api;
 
   useEffect(() => {
@@ -35,7 +35,6 @@ export default function Dashboard({ auth }) {
 
           {/* <Profile userDetails={userDetails} /> */}
           <AlbumView api={spotifyApi} userId={userDetails?.id} />
-          <UserReviews />
         </div>
       ) : (
         <div>

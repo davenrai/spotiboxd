@@ -30,9 +30,7 @@ export default function Nav({ avatar, name }) {
           ) : (
             []
           )}
-          <Navbar.Text>
-            <a href="#">{name}</a>
-          </Navbar.Text>
+          <Navbar.Text>{name}</Navbar.Text>
         </Navbar.Collapse>
       </Container>
     </Navbar>

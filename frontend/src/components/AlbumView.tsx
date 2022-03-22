@@ -114,6 +114,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
           <AlbumDetails
             userId={userId}
             id={selectedAlbumId}
+            title={selectedAlbumDetails.name}
             images={selectedAlbumDetails.images}
             artists={selectedAlbumDetails.artists}
             tracks={selectedAlbumDetails.tracks}

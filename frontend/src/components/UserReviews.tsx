@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Row } from "react-bootstrap";
+import { Container, ListGroup } from "react-bootstrap";
 
 export default function UserReviews({ userId, setSelectedAlbumId }) {
   // make a call to db to get all ids of reviews from the user.
@@ -13,18 +13,25 @@ export default function UserReviews({ userId, setSelectedAlbumId }) {
       .then((res) => setUserReviews(res.data));
   }, [userId]);
   return (
-    <div>
-      <h1>User Reviews</h1>
-      {userReviews?.map((review) => (
-        <div
-          onClick={() => setSelectedAlbumId(review.album_id)}
-          key={review.user_id + review.album_id}
-        >
-          <p>
-            {review.album_id} - {review.review}
-          </p>
-        </div>
-      ))}
+    <div className="my-5">
+      <h1>Your Reviews</h1>
+      <Container fluid="sm">
+        <ListGroup>
+          {userReviews?.map((review) => (
+            <ListGroup.Item
+              as="li"
+              className="d-flex justify-content-between align-items-start bg-dark"
+              onClick={() => setSelectedAlbumId(review.album_id)}
+              key={review.user_id + review.album_id}
+              style={{ textAlign: "left", color: "white" }}
+            >
+              <p>
+                {review.album_title} - {review.review}
+              </p>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </Container>
     </div>
   );
 }

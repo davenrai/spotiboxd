@@ -129,8 +129,14 @@ app.get("/review", (req, res) => {
 app.post("/review", (req, res) => {
   console.log(req.body);
   db.query(
-    "INSERT INTO album_reviews VALUES ($1, $2, $3) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3",
-    [req.body.id, req.body.albumId, req.body.review],
+    "INSERT INTO album_reviews VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3",
+    [
+      req.body.id,
+      req.body.albumId,
+      req.body.review,
+      req.body.artist,
+      req.body.title,
+    ],
     (err, result) => {
       if (err) {
         console.log(err);

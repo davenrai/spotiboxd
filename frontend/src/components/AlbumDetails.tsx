@@ -1,8 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardGroup, Form } from "react-bootstrap";
+import { Button, Card, CardGroup, Form, Row } from "react-bootstrap";
 
-export default function AlbumDetails({ id, images, tracks, artists, userId }) {
+export default function AlbumDetails({
+  id,
+  images,
+  tracks,
+  title,
+  artists,
+  userId,
+}) {
   const [albumReview, setAlbumReview] = useState<string>("");
   const [uploadMessage, setUploadMessage] = useState<string>("");
 
@@ -19,8 +26,6 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
   }, [id]);
 
   function handleReviewSubmit(e) {
-    // send if albumReview to server
-    // setAlbumReview(null)
     try {
       if (albumReview) {
         axios
@@ -28,6 +33,8 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
             id: userId,
             albumId: id,
             review: albumReview,
+            title: title,
+            artist: artists[0].name ?? null,
           })
           .then((res) => {
             setUploadMessage("Review saved.");
@@ -41,11 +48,20 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
   return (
     <div>
       <CardGroup>
-        <Card style={{ width: "20rem", backgroundColor: "black" }}>
+        <Card
+          className="m-2"
+          style={{
+            width: "20rem",
+            backgroundColor: "black",
+            textAlign: "left",
+          }}
+        >
+          <h2>{artists.map((artist) => artist.name).join(", ")}</h2>
+          <h4>{title}</h4>
           <Card.Img style={{ width: "350px" }} src={images[1].url}></Card.Img>
         </Card>
         <Card
-          className="justify-content-center"
+          className="justify-content-center m-2 p-5 border border-light"
           style={{ backgroundColor: "black" }}
         >
           {tracks.items.map((track) => {
@@ -57,11 +73,13 @@ export default function AlbumDetails({ id, images, tracks, artists, userId }) {
           })}
         </Card>
         <Card
-          className="justify-content-center"
+          className="justify-content-center m-2"
           style={{ backgroundColor: "black", height: "fit-content" }}
         >
           <Form.Group controlId="form.Textarea" style={{ height: "90%" }}>
-            <Form.Label>Your Review</Form.Label>
+            <Form.Label>
+              <h3>Your Review</h3>
+            </Form.Label>
             <Form.Control
               as="textarea"
               rows={10}

@@ -10,7 +10,8 @@ import UserReviews from "./UserReviews";
 export default function Dashboard({ auth }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [userDetails, setUserDetails] = useState(null);
-  // const [selectedAlbumId, setSelectedAlbumId] = useState<any>(null);
+  const [showUser, setShowUser] = useState<boolean>(false);
+
   let spotifyApi = auth.api;
 
   useEffect(() => {
@@ -32,12 +33,14 @@ export default function Dashboard({ auth }) {
             avatar={userDetails?.images[0].url}
             name={userDetails?.display_name}
           />
-
-          {/* <Profile userDetails={userDetails} /> */}
-          <AlbumView api={spotifyApi} userId={userDetails?.id} />
+          {showUser ? (
+            <div></div>
+          ) : (
+            <AlbumView api={spotifyApi} userId={userDetails?.id} />
+          )}
         </div>
       ) : (
-        <div>
+        <div className="justify-content-center align-items-center m-auto">
           <h1>Loading...</h1>
         </div>
       )}

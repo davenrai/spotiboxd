@@ -53,12 +53,6 @@ export default function AlbumView({ api: spotifyApi, userId }) {
       });
   }, [searchTerm]);
 
-  // useEffect(() => {
-  //   if (!userSavedAlbums) {
-  //     return;
-  //   }
-  // });
-
   useEffect(() => {
     if (!selectedAlbumId) {
       return;
@@ -91,7 +85,6 @@ export default function AlbumView({ api: spotifyApi, userId }) {
               : userSavedAlbums.offset - userSavedAlbums.limit,
         })
         .then((data) => {
-          console.log(data);
           let { items, next, previous, limit, offset } = data.body;
           let albums = items.map((item) => item.album);
           setUserSavedAlbums({
@@ -109,6 +102,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
 
   return (
     <div className="my-5">
+      <UserReviews userId={userId} setSelectedAlbumId={setSelectedAlbumId} />
       <Container>
         {selectedAlbumDetails && (
           <AlbumDetails
@@ -135,7 +129,6 @@ export default function AlbumView({ api: spotifyApi, userId }) {
         handlePagination={handlePagination}
         isUserPreview={!searchTerm}
       />
-      <UserReviews userId={userId} setSelectedAlbumId={setSelectedAlbumId} />
     </div>
   );
 }

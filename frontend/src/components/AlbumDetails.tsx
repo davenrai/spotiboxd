@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardGroup, Form, Row } from "react-bootstrap";
+import { Button, Card, CardGroup, Form, Row, Table } from "react-bootstrap";
 
 export default function AlbumDetails({
   id,
@@ -61,16 +61,45 @@ export default function AlbumDetails({
           <Card.Img style={{ width: "350px" }} src={images[1].url}></Card.Img>
         </Card>
         <Card
-          className="justify-content-center m-2 p-5 border border-light"
+          className="justify-content-center m-2 p-2"
           style={{ backgroundColor: "black" }}
         >
-          {tracks.items.map((track) => {
+          {/* {tracks.items.map((track) => {
             return (
               <div key={track.id}>
                 {track.track_number} - {track.name}
               </div>
             );
-          })}
+          })} */}
+          <Table bordered variant="dark">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tracks.items.map((track, index) => (
+                // <div key={track.id}>
+                //   {track.track_number} - {track.name}
+                // </div>
+                <tr key={track.id}>
+                  <td>{track.track_number}</td>
+                  <td>{track.name}</td>
+                </tr>
+              ))}
+              {/* {userReviews?.map((review) => (
+              <tr
+                key={review.user_id + review.album_id}
+                onClick={() => setSelectedAlbumId(review.album_id)}
+              >
+                <td>{review.artist}</td>
+                <td>{review.album_title}</td>
+                <td>{review.review}</td>
+              </tr>
+            ))} */}
+            </tbody>
+          </Table>
         </Card>
         <Card
           className="justify-content-center m-2"

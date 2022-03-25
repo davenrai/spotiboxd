@@ -12,7 +12,9 @@ export default function AlbumPreview({
   }
   return (
     <div>
-      <h3>{isUserPreview ? "Your Saved Albums" : "Search Results"}</h3>
+      <h3>
+        <u>{isUserPreview ? "Your Saved Albums" : "Search Results"}</u>
+      </h3>
       {albums && (
         <div
           className="container"

@@ -129,7 +129,7 @@ app.get("/review", (req, res) => {
 app.post("/review", (req, res) => {
   console.log(req.body);
   db.query(
-    "INSERT INTO album_reviews VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3",
+    "INSERT INTO album_reviews VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3 AND artist = $4 AND album_title = $5",
     [
       req.body.id,
       req.body.albumId,
@@ -151,6 +151,19 @@ app.get("/reviews", (req, res) => {
   db.query(
     "SELECT * FROM album_reviews WHERE id = $1",
     [userId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send(result);
+    }
+  );
+});
+
+app.post("/rating", (req, res) => {
+  db.query(
+    "INSERT INTO album_reviews VALUES ($1, $2, $3) ON CONFLICT (user_id, album_id) DO UPDATE SET track_ratings = $3",
+    [req.body.id, req.body.albumId, req.body.ratings],
     (err, result) => {
       if (err) {
         console.log(err);

@@ -14,9 +14,7 @@ export default function UserReviews({ userId, setSelectedAlbumId }) {
   }, [userId]);
   return (
     <div className="my-5">
-      <h1>
-        <u>Your Reviews</u>
-      </h1>
+      <h5>Your Reviews</h5>
       <Container fluid="sm">
         <Table striped bordered hover variant="dark">
           <thead>

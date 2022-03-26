@@ -11,6 +11,7 @@ export default function AlbumDetails({
   userId,
 }) {
   const [albumReview, setAlbumReview] = useState<string>("");
+  const [trackRatings, setTrackRatings] = useState<number[]>([]);
   const [uploadMessage, setUploadMessage] = useState<string>("");
 
   useEffect(() => {
@@ -20,8 +21,14 @@ export default function AlbumDetails({
       .get(`http://localhost:4000/review?user=${userId}&album=${id}`)
       .then((res) => {
         let review = res.data[0]?.review;
-        console.log(review);
+        let track_ratings = res.data[0]?.track_ratings;
         if (review) setAlbumReview(review);
+        if (track_ratings) {
+          console.log(track_ratings);
+          setTrackRatings(track_ratings.split(","));
+        } else {
+          setTrackRatings(new Array(tracks?.items.length).fill(0));
+        }
       });
   }, [id]);
 
@@ -45,6 +52,22 @@ export default function AlbumDetails({
     }
   }
 
+  function handleRatingSubmit() {
+    try {
+      axios
+        .post("http://localhost:4000/rating", {
+          id: userId,
+          albumId: id,
+          ratings: trackRatings.join(","),
+        })
+        .then((res) => {
+          console.log("success");
+        });
+    } catch {
+      console.log("failure");
+    }
+  }
+
   return (
     <div>
       <CardGroup>
@@ -58,24 +81,60 @@ export default function AlbumDetails({
         >
           <h2>{artists.map((artist) => artist.name).join(", ")}</h2>
           <h4>{title}</h4>
-          <Card.Img style={{ width: "350px" }} src={images[1].url}></Card.Img>
+          <Card.Img
+            className="img-fluid"
+            style={{ width: "300px" }}
+            src={images[1].url}
+          ></Card.Img>
+          Aggregated Review (Based on Track Ratings) :{" "}
+          {trackRatings
+            ? (
+                trackRatings?.reduce(
+                  (prevVal, currValue) => Number(prevVal) + Number(currValue),
+                  0
+                ) / trackRatings?.length
+              ).toFixed(1)
+            : "N/A"}
+          <hr />
+          <Card
+            className="justify-content-center bg-black"
+            style={{ height: "fit-content" }}
+          >
+            <Form.Group controlId="form.Textarea">
+              <Form.Label>
+                <h5>Review</h5>
+              </Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={10}
+                type="review"
+                placeholder={
+                  albumReview !== "" ? albumReview : "Enter review here.."
+                }
+                onChange={(e) => setAlbumReview(e.target.value)}
+                value={albumReview}
+              />
+            </Form.Group>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={(e) => handleReviewSubmit(e)}
+            >
+              Submit
+            </Button>
+            <Form.Text className="text-muted">{uploadMessage}</Form.Text>
+          </Card>
         </Card>
         <Card
-          className="justify-content-center m-2 p-2"
+          className="justify-content-center m-2"
           style={{ backgroundColor: "black" }}
         >
-          {/* {tracks.items.map((track) => {
-            return (
-              <div key={track.id}>
-                {track.track_number} - {track.name}
-              </div>
-            );
-          })} */}
           <Table bordered variant="dark">
             <thead>
               <tr>
                 <th>#</th>
                 <th>Title</th>
+                <th>Track Rating</th>
               </tr>
             </thead>
             <tbody>
@@ -86,46 +145,32 @@ export default function AlbumDetails({
                 <tr key={track.id}>
                   <td>{track.track_number}</td>
                   <td>{track.name}</td>
+                  <td>
+                    <select
+                      className="form-select form-select-md"
+                      aria-label=".form-select-sm example"
+                      value={trackRatings[index]}
+                      onChange={(e) => {
+                        setTrackRatings(
+                          trackRatings.map((value, i) =>
+                            i === index ? parseInt(e.target.value) : value
+                          )
+                        );
+                      }}
+                    >
+                      <option defaultValue={0}>Rating</option>
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </td>
                 </tr>
               ))}
-              {/* {userReviews?.map((review) => (
-              <tr
-                key={review.user_id + review.album_id}
-                onClick={() => setSelectedAlbumId(review.album_id)}
-              >
-                <td>{review.artist}</td>
-                <td>{review.album_title}</td>
-                <td>{review.review}</td>
-              </tr>
-            ))} */}
             </tbody>
           </Table>
-        </Card>
-        <Card
-          className="justify-content-center m-2"
-          style={{ backgroundColor: "black", height: "fit-content" }}
-        >
-          <Form.Group controlId="form.Textarea" style={{ height: "90%" }}>
-            <Form.Label>
-              <h3>Your Review</h3>
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={10}
-              type="review"
-              placeholder={albumReview ?? "Enter review here.."}
-              onChange={(e) => setAlbumReview(e.target.value)}
-              value={albumReview}
-            />
-          </Form.Group>
-          <Button
-            size="lg"
-            variant="secondary"
-            onClick={(e) => handleReviewSubmit(e)}
-          >
-            Submit
-          </Button>
-          <Form.Text className="text-muted">{uploadMessage}</Form.Text>
+          <Button onClick={handleRatingSubmit}>Save</Button>
         </Card>
       </CardGroup>
     </div>

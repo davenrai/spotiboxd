@@ -1,21 +1,27 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Container, ListGroup, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Container, Table } from "react-bootstrap";
 
 export default function UserReviews({ userId, setSelectedAlbumId }) {
-  // make a call to db to get all ids of reviews from the user.
-  // display a mini album detail of each.
   const [userReviews, setUserReviews] = useState(null);
   useEffect(() => {
+    getUserReviews();
+  }, [userId]);
+
+  function getUserReviews() {
     if (!userId) return;
     axios
       .get(`http://localhost:4000/reviews?userId=${userId}`)
       .then((res) => setUserReviews(res.data));
-  }, [userId]);
+  }
+
   return (
     <div className="my-5">
       <h5>Your Reviews</h5>
       <Container fluid="sm">
+        <div style={{ textAlign: "right" }}>
+          <button onClick={getUserReviews}>Refresh</button>
+        </div>
         <Table striped bordered hover variant="dark">
           <thead>
             <tr>

@@ -129,7 +129,7 @@ app.get("/review", (req, res) => {
 app.post("/review", (req, res) => {
   console.log(req.body);
   db.query(
-    "INSERT INTO album_reviews VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3 AND artist = $4 AND album_title = $5",
+    "INSERT INTO album_reviews VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET review = $3, artist = $4, album_title = $5",
     [
       req.body.id,
       req.body.albumId,
@@ -140,8 +140,9 @@ app.post("/review", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
+      } else {
+        res.send(result);
       }
-      res.send(result);
     }
   );
 });
@@ -161,9 +162,16 @@ app.get("/reviews", (req, res) => {
 });
 
 app.post("/rating", (req, res) => {
+  console.log(req.body);
   db.query(
-    "INSERT INTO album_reviews VALUES ($1, $2, $3) ON CONFLICT (user_id, album_id) DO UPDATE SET track_ratings = $3",
-    [req.body.id, req.body.albumId, req.body.ratings],
+    "INSERT INTO album_reviews (user_id, album_id, artist, album_title, track_ratings) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, album_id) DO UPDATE SET track_ratings = $5",
+    [
+      req.body.id,
+      req.body.albumId,
+      req.body.artist,
+      req.body.title,
+      req.body.ratings,
+    ],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -173,6 +181,6 @@ app.post("/rating", (req, res) => {
   );
 });
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`listening on port ${port}`);
 });

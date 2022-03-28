@@ -13,10 +13,12 @@ export default function AlbumDetails({
   const [albumReview, setAlbumReview] = useState<string>("");
   const [trackRatings, setTrackRatings] = useState<number[]>([]);
   const [uploadMessage, setUploadMessage] = useState<string>("");
+  const [ratingSavedMessage, setRatingSavedMessage] = useState<string>("");
 
   useEffect(() => {
     setAlbumReview("");
     setUploadMessage("");
+    setRatingSavedMessage("");
     axios
       .get(`http://localhost:4000/review?user=${userId}&album=${id}`)
       .then((res) => {
@@ -44,6 +46,7 @@ export default function AlbumDetails({
             artist: artists[0].name ?? null,
           })
           .then((res) => {
+            setRatingSavedMessage("");
             setUploadMessage("Review saved.");
           });
       }
@@ -58,10 +61,13 @@ export default function AlbumDetails({
         .post("http://localhost:4000/rating", {
           id: userId,
           albumId: id,
+          title: title,
+          artist: artists[0].name ?? null,
           ratings: trackRatings.join(","),
         })
         .then((res) => {
-          console.log("success");
+          setUploadMessage("");
+          setRatingSavedMessage("Ratings Saved.");
         });
     } catch {
       console.log("failure");
@@ -86,15 +92,17 @@ export default function AlbumDetails({
             style={{ width: "300px" }}
             src={images[1].url}
           ></Card.Img>
-          Aggregated Review (Based on Track Ratings) :{" "}
-          {trackRatings
-            ? (
-                trackRatings?.reduce(
-                  (prevVal, currValue) => Number(prevVal) + Number(currValue),
-                  0
-                ) / trackRatings?.length
-              ).toFixed(1)
-            : "N/A"}
+          <p>
+            Review (Based on Track Ratings) :{" "}
+            {trackRatings
+              ? (
+                  trackRatings?.reduce(
+                    (prevVal, currValue) => Number(prevVal) + Number(currValue),
+                    0
+                  ) / trackRatings?.length
+                ).toFixed(1)
+              : "N/A"}
+          </p>
           <hr />
           <Card
             className="justify-content-center bg-black"
@@ -125,10 +133,7 @@ export default function AlbumDetails({
             <Form.Text className="text-muted">{uploadMessage}</Form.Text>
           </Card>
         </Card>
-        <Card
-          className="justify-content-center m-2"
-          style={{ backgroundColor: "black" }}
-        >
+        <Card className="m-2" style={{ backgroundColor: "black" }}>
           <Table bordered variant="dark">
             <thead>
               <tr>
@@ -170,7 +175,10 @@ export default function AlbumDetails({
               ))}
             </tbody>
           </Table>
-          <Button onClick={handleRatingSubmit}>Save</Button>
+          <Button className="btn-secondary" onClick={handleRatingSubmit}>
+            Save
+          </Button>
+          <p className="text-muted">{ratingSavedMessage}</p>
         </Card>
       </CardGroup>
     </div>

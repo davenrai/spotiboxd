@@ -38,10 +38,6 @@ var generateRandomString = function (length) {
   return text;
 };
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/build/index.html"));
-});
-
 // app login
 app.get("/login", (req, res) => {
   let state = generateRandomString(16);

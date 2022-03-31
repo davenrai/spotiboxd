@@ -47,7 +47,7 @@ export const SpotifyAuthProvider = (props: {
         let { refreshToken } = oldAuth;
         if (!refreshToken) return;
         axios
-          .post("http://localhost:4000/refreshToken", {
+          .post("/refreshToken", {
             refreshToken: refreshToken,
           })
           .then((res) => {

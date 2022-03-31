@@ -11,7 +11,7 @@ export default function UserReviews({ userId, setSelectedAlbumId }) {
   function getUserReviews() {
     if (!userId) return;
     axios
-      .get(`http://localhost:4000/reviews?userId=${userId}`)
+      .get(`/reviews?userId=${userId}`)
       .then((res) => setUserReviews(res.data));
   }
 

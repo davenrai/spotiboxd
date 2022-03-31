@@ -10,10 +10,7 @@ export default function Login() {
       <h1>Welcome to Spotiboxd</h1>
       <div>
         <img></img>
-        <a
-          className="btn btn-success btn-lg"
-          href={"http://localhost:4000/login"}
-        >
+        <a className="btn btn-success btn-lg" href={"/login"}>
           Login with Spotify!
         </a>
       </div>

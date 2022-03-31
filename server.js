@@ -38,8 +38,8 @@ var generateRandomString = function (length) {
   return text;
 };
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/build/index.html"));
 });
 
 // app login

@@ -19,26 +19,24 @@ export default function AlbumDetails({
     setAlbumReview("");
     setUploadMessage("");
     setRatingSavedMessage("");
-    axios
-      .get(`http://localhost:4000/review?user=${userId}&album=${id}`)
-      .then((res) => {
-        let review = res.data[0]?.review;
-        let track_ratings = res.data[0]?.track_ratings;
-        if (review) setAlbumReview(review);
-        if (track_ratings) {
-          console.log(track_ratings);
-          setTrackRatings(track_ratings.split(","));
-        } else {
-          setTrackRatings(new Array(tracks?.items.length).fill(0));
-        }
-      });
+    axios.get(`/review?user=${userId}&album=${id}`).then((res) => {
+      let review = res.data[0]?.review;
+      let track_ratings = res.data[0]?.track_ratings;
+      if (review) setAlbumReview(review);
+      if (track_ratings) {
+        console.log(track_ratings);
+        setTrackRatings(track_ratings.split(","));
+      } else {
+        setTrackRatings(new Array(tracks?.items.length).fill(0));
+      }
+    });
   }, [id]);
 
   function handleReviewSubmit(e) {
     try {
       if (albumReview) {
         axios
-          .post("http://localhost:4000/review", {
+          .post("/review", {
             id: userId,
             albumId: id,
             review: albumReview,
@@ -58,7 +56,7 @@ export default function AlbumDetails({
   function handleRatingSubmit() {
     try {
       axios
-        .post("http://localhost:4000/rating", {
+        .post("/rating", {
           id: userId,
           albumId: id,
           title: title,

@@ -47,5 +47,6 @@
   },
   "devDependencies": {
     "@types/spotify-web-api-node": "^5.0.7"
-  }
+  },
+  "proxy": "http://localhost:4000"
 }

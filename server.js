@@ -2,11 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
+const path = require("path");
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 app.use(express.json());
 app.use(cors());
+
+if (process.env.NODE_ENV === "production") {
+  // server static content
+  app.use(express.static(path.join(__dirname, "frontend/build")));
+}
+
 const SpotifyWebApi = require("spotify-web-api-node");
 
 // const CLIENT_ID = process.env.CLIENT_ID;

@@ -5,6 +5,7 @@ const db = require("./db");
 const path = require("path");
 const app = express();
 const port = process.env.PORT || 4000;
+const FRONTEND_URI = process.env.FRONTEND_URI || "http://localhost:3000";
 
 app.use(express.json());
 app.use(cors());
@@ -55,27 +56,19 @@ app.get("/callback", (req, res) => {
         console.log("The token expires in " + data.body["expires_in"]);
         console.log("The access token is " + data.body["access_token"]);
         console.log("The refresh token is " + data.body["refresh_token"]);
-        // let accessToken = data.body["access_token"];
-        // let refreshToken = data.body["refresh_token"];
+
         let {
           access_token: accessToken,
           refresh_token: refreshToken,
           expires_in: expiresIn,
         } = data.body;
-        // spotifyApi.setAccessToken(accessToken);
-        // spotifyApi.setRefreshToken(refreshToken);
-        // console.log("Access/Refresh Token Set.");
-        // const params = new URLSearchParams({
-        //   accessToken: accessToken,
-        //   refreshToken: refreshToken,
-        // });
-        //spotifyApi.getMe().then(({ body }) => console.log(body));
+
         const params = new URLSearchParams({
           accessToken: accessToken,
           refreshToken: refreshToken,
           expiresIn: expiresIn,
         });
-        res.redirect(`http://localhost:3000/?${params}`);
+        res.redirect(`${FRONTEND_URI}/?${params}`); // Need to remove localhost.. because this is what prod goes to after login http://localhost:3000/?accessToken=BQABo4Zm526pcUzLJaEnzm8HhUnEtT2C_Sku3bUF5BXKvjtQxZqtXIqFCgAfRvwc3B_67dxamko-3M5hrTKhlgIzK9GtyFu9UVo2nX0Tov3GBMZ7DZDEw6B6Rg3Z35CzJg_8u_alFqHaONaVjDXVcP8vQNWlaXAZHeP_r7oBuw&refreshToken=AQCs_EJ8GOGXaqrhhuZiCAPP0Ajit8Mz8bSXFx4csDuzgA-HObZYnFi2jX6EVwutDx2jr5YvDM0G0TuqyiwsDhdCWUgO1_J0SHRf1hLLvsO-gJ0RSVAx0Fcs8bfU0eOfoEA&expiresIn=3600
       })
       .catch((err) => console.log("Error occured authorizing code.", err));
   }

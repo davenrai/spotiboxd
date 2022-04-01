@@ -2,9 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 
 const LOGIN_URI =
-  process.env.NODE_ENV === "production"
-    ? "https://spotiboxd.herokuapp.com/"
-    : "http://localhost:4000";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:4000";
 
 export default function Login() {
   return (

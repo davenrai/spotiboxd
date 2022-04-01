@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "production") {
 const SpotifyWebApi = require("spotify-web-api-node");
 
 let credentials = {
-  redirectUri: "/callback",
+  redirectUri: process.env.REDIRECT_URI,
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
 };
@@ -55,19 +55,27 @@ app.get("/callback", (req, res) => {
         console.log("The token expires in " + data.body["expires_in"]);
         console.log("The access token is " + data.body["access_token"]);
         console.log("The refresh token is " + data.body["refresh_token"]);
-
+        // let accessToken = data.body["access_token"];
+        // let refreshToken = data.body["refresh_token"];
         let {
           access_token: accessToken,
           refresh_token: refreshToken,
           expires_in: expiresIn,
         } = data.body;
-
+        // spotifyApi.setAccessToken(accessToken);
+        // spotifyApi.setRefreshToken(refreshToken);
+        // console.log("Access/Refresh Token Set.");
+        // const params = new URLSearchParams({
+        //   accessToken: accessToken,
+        //   refreshToken: refreshToken,
+        // });
+        //spotifyApi.getMe().then(({ body }) => console.log(body));
         const params = new URLSearchParams({
           accessToken: accessToken,
           refreshToken: refreshToken,
           expiresIn: expiresIn,
         });
-        res.redirect(`/?${params}`);
+        res.redirect(`http://localhost:3000/?${params}`);
       })
       .catch((err) => console.log("Error occured authorizing code.", err));
   }

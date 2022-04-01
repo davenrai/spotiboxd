@@ -1,6 +1,5 @@
 export const getTokenParams = (params) => {
   if (window.location.search) {
-    console.log(window.location.search);
     let tokenData = {
       accessToken: params.get("accessToken"),
       refreshToken: params.get("refreshToken"),

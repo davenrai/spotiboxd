@@ -27,7 +27,7 @@ export const SpotifyAuthProvider = (props: {
   };
   const authContextValue = { ...auth, setAuthData };
   const params = new URLSearchParams(window.location.search);
-  let spotifyApi = new SpotifyWebApi({
+  const spotifyApi = new SpotifyWebApi({
     clientId: "327623f8bf6c4fb399f6261e14847497",
   });
   // Set token info from local storage to context
@@ -77,19 +77,34 @@ export const SpotifyAuthProvider = (props: {
       console.log(err);
     }
   }, []);
+
   useEffect(() => {
     if (params && !auth) {
       const tokenInfo = getTokenParams(params);
       window.history.pushState({}, null, "/");
       if (tokenInfo === null) return;
-
-      setAuthData(tokenInfo);
+      spotifyApi.setCredentials({
+        accessToken: tokenInfo.accessToken,
+        refreshToken: tokenInfo.refreshToken,
+      });
+      setAuthData({ ...tokenInfo, api: spotifyApi });
     }
   }, [params]);
 
   useEffect(() => {
     if (auth) {
-      window.localStorage.setItem("auth", JSON.stringify(auth));
+      spotifyApi.setCredentials({
+        accessToken: auth.accessToken,
+        refreshToken: auth.refreshToken,
+      });
+      window.localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          accessToken: auth.accessToken,
+          refreshToken: auth.refreshToken,
+          expiresAt: Date.now() + parseInt(auth.expiresAt) * 1000,
+        })
+      );
     }
   }, [auth]);
   return (

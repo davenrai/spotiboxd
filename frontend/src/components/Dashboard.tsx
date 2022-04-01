@@ -15,6 +15,7 @@ export default function Dashboard({ auth }) {
   let spotifyApi = auth.api;
 
   useEffect(() => {
+    if (!spotifyApi || !auth.accessToken) return;
     spotifyApi
       ?.getMe()
       .then(function (data) {
@@ -23,7 +24,7 @@ export default function Dashboard({ auth }) {
         });
       })
       .catch((err) => console.log(err));
-  }, [auth.accessToken]);
+  }, [auth]);
 
   return (
     <div className="h-100">

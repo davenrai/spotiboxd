@@ -8,11 +8,16 @@ import SpotifyWebApi from "spotify-web-api-node";
 
 function App() {
   const { accessToken, refreshToken, expiresAt, api } = useAuth();
+
   return (
     <div
       style={{ textAlign: "center", backgroundColor: "black", height: "100vh" }}
     >
-      {accessToken ? <Dashboard auth={{ accessToken, api }} /> : <Login />}
+      {accessToken && api ? (
+        <Dashboard auth={{ accessToken, api }} />
+      ) : (
+        <Login />
+      )}
     </div>
   );
 }

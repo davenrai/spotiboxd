@@ -98,7 +98,7 @@ app.get("/reviews", (req, res) => {
   db.query("SELECT * FROM album_reviews", (err, result) => {
     if (err) {
       console.log(err);
-      res.send({});
+      res.send([]);
     }
     res.send(result.rows);
   });
@@ -114,7 +114,7 @@ app.get("/review", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
-        res.send({});
+        res.send([]);
       }
       res.send(result.rows);
     }

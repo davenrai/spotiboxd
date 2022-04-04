@@ -94,29 +94,20 @@ app.post("/refreshToken", (req, res) => {
     });
 });
 
-app.get("/reviews", (req, res) => {
-  db.query("SELECT * FROM album_reviews", (err, result) => {
-    if (err) {
-      console.log(err);
-      res.send([]);
-    }
-    res.send(result.rows);
-  });
-});
-
-app.get("/review", (req, res) => {
+app.get("/review", (req, res, next) => {
   let userId = req.query.user;
   let albumId = req.query.album;
 
   db.query(
-    "SELECT * FROM album_reviews WHERE user_id=($1) AND album_id=($2)",
+    "SELECT * FROM album_reviews WHERE user_id=$1 AND album_id=$2",
     [userId, albumId],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.send([]);
+        next(err);
+      } else {
+        res.send(result.rows);
       }
-      res.send(result.rows);
     }
   );
 });
@@ -145,13 +136,13 @@ app.post("/review", (req, res) => {
 app.get("/reviews", (req, res) => {
   let userId = req.query.userId;
   db.query(
-    "SELECT * FROM album_reviews WHERE id = $1",
+    "SELECT * FROM album_reviews WHERE user_id = $1",
     [userId],
     (err, result) => {
       if (err) {
         console.log(err);
       }
-      res.send(result);
+      res.send(result.rows);
     }
   );
 });

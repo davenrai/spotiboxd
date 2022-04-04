@@ -4,7 +4,7 @@ const cors = require("cors");
 const db = require("./db");
 const path = require("path");
 const app = express();
-const port = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000;
 const FRONTEND_URI = process.env.FRONTEND_URI || "http://localhost:3000";
 
 app.use(express.json());
@@ -98,6 +98,7 @@ app.get("/reviews", (req, res) => {
   db.query("SELECT * FROM album_reviews", (err, result) => {
     if (err) {
       console.log(err);
+      res.send({});
     }
     res.send(result.rows);
   });
@@ -113,6 +114,7 @@ app.get("/review", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
+        res.send({});
       }
       res.send(result.rows);
     }
@@ -174,6 +176,6 @@ app.post("/rating", (req, res) => {
   );
 });
 
-app.listen(process.env.PORT || port, () => {
-  console.log(`listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
 });

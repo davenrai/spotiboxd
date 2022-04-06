@@ -42,16 +42,13 @@ export const SpotifyAuthProvider = (props: {
         });
         setAuthData({ ...data, api: spotifyApi });
       } else {
-        let oldAuth = JSON.parse(window.localStorage.getItem("auth"));
-        if (!oldAuth) return;
-        let { refreshToken } = oldAuth;
+        let { refreshToken } = data;
         if (!refreshToken) return;
         axios
           .post("/refreshToken", {
             refreshToken: refreshToken,
           })
           .then((res) => {
-            console.log(res.data);
             let {
               accessToken,
               expiresIn,
@@ -102,11 +99,12 @@ export const SpotifyAuthProvider = (props: {
         JSON.stringify({
           accessToken: auth.accessToken,
           refreshToken: auth.refreshToken,
-          expiresAt: Date.now() + parseInt(auth.expiresAt) * 1000,
+          expiresAt: auth.expiresAt,
         })
       );
     }
   }, [auth]);
+
   return (
     <SpotifyUserContext.Provider value={authContextValue}>
       {props.children}

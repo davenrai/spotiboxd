@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./db");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 const app = express();
 const PORT = process.env.PORT || 4000;
 const FRONTEND_URI = process.env.FRONTEND_URI || "http://localhost:3000";
@@ -36,6 +37,42 @@ var generateRandomString = function (length) {
   return text;
 };
 
+function checkToken(req, res, next) {
+  try {
+    const header = req.headers["Authorization"];
+    console.log(header);
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+
+      req.token = token;
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(401);
+  }
+}
+
+function generateJSONWebToken(accessToken) {
+  try {
+    spotifyApi.setAccessToken(accessToken);
+    spotifyApi
+      .getMe()
+      .then((data) => {
+        return data.body.id;
+      })
+      .then((userId) => {
+        let token = jwt.sign({ userId }, "privatekey");
+        console.log(token);
+        return token;
+      });
+  } catch (err) {
+    console.log(err);
+  }
+}
 // app login
 app.get("/login", (req, res) => {
   let state = generateRandomString(16);
@@ -50,27 +87,26 @@ app.get("/callback", (req, res) => {
   let { code, state } = req.query;
   // handle state from req.cookie
   if (code && state) {
-    spotifyApi
-      .authorizationCodeGrant(code)
-      .then((data) => {
-        console.log("The token expires in " + data.body["expires_in"]);
-        console.log("The access token is " + data.body["access_token"]);
-        console.log("The refresh token is " + data.body["refresh_token"]);
+    spotifyApi.authorizationCodeGrant(code).then((data) => {
+      console.log("The token expires in " + data.body["expires_in"]);
+      console.log("The access token is " + data.body["access_token"]);
+      console.log("The refresh token is " + data.body["refresh_token"]);
 
-        let {
-          access_token: accessToken,
-          refresh_token: refreshToken,
-          expires_in: expiresIn,
-        } = data.body;
-
-        const params = new URLSearchParams({
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          expiresIn: expiresIn,
-        });
-        res.redirect(`${FRONTEND_URI}/?${params}`); // Need to remove localhost.. because this is what prod goes to after login http://localhost:3000/?accessToken=BQABo4Zm526pcUzLJaEnzm8HhUnEtT2C_Sku3bUF5BXKvjtQxZqtXIqFCgAfRvwc3B_67dxamko-3M5hrTKhlgIzK9GtyFu9UVo2nX0Tov3GBMZ7DZDEw6B6Rg3Z35CzJg_8u_alFqHaONaVjDXVcP8vQNWlaXAZHeP_r7oBuw&refreshToken=AQCs_EJ8GOGXaqrhhuZiCAPP0Ajit8Mz8bSXFx4csDuzgA-HObZYnFi2jX6EVwutDx2jr5YvDM0G0TuqyiwsDhdCWUgO1_J0SHRf1hLLvsO-gJ0RSVAx0Fcs8bfU0eOfoEA&expiresIn=3600
-      })
-      .catch((err) => console.log("Error occured authorizing code.", err));
+      let {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_in: expiresIn,
+      } = data.body;
+      let token = generateJSONWebToken(accessToken);
+      console.log(`TOKEN ${token}`);
+      const params = new URLSearchParams({
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        expiresIn: expiresIn,
+        token: token,
+      });
+      res.redirect(`${FRONTEND_URI}/?${params}`);
+    });
   }
 });
 
@@ -83,10 +119,11 @@ app.post("/refreshToken", (req, res) => {
     .refreshAccessToken()
     .then((data) => {
       console.log(" The access token has been refreshed.");
-
+      let token = generateJSONWebToken(data.body.access_token);
       res.json({
         accessToken: data.body["access_token"],
         expiresIn: data.body["expires_in"],
+        token,
       });
     })
     .catch((err) => {
@@ -94,9 +131,23 @@ app.post("/refreshToken", (req, res) => {
     });
 });
 
-app.get("/review", (req, res, next) => {
+app.get("/review", checkToken, (req, res) => {
   let userId = req.query.user;
   let albumId = req.query.album;
+  let decodedToken = jwt.verify(
+    req.token,
+    "privatekey",
+    (err, authorizedData) => {
+      if (err) {
+        res.send(403);
+      } else {
+        console.log("AUTHORIZED DATA", authorizedData);
+        if (userId !== authorizedData.userId) {
+          res.sendStatus(403);
+        }
+      }
+    }
+  );
 
   db.query(
     "SELECT * FROM album_reviews WHERE user_id=$1 AND album_id=$2",

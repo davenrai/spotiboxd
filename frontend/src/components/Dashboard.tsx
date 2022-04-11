@@ -18,7 +18,7 @@ export default function Dashboard({ auth }) {
     if (!spotifyApi || !auth.accessToken) return;
     spotifyApi
       ?.getMe()
-      .then(function (data) {
+      .then((data) => {
         setUserDetails({
           ...data.body,
         });

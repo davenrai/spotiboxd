@@ -10,11 +10,18 @@ export default function UserReviews({ userId, setSelectedAlbumId }) {
 
   function getUserReviews() {
     if (!userId) return;
-    axios.get(`/reviews?userId=${userId}`).then((res) => {
-      if (res.data) {
-        setUserReviews(res.data);
-      }
-    });
+    console.log(JSON.parse(window.localStorage.auth).token);
+    axios
+      .get(`/reviews?userId=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(window.localStorage.auth).token}`,
+        },
+      })
+      .then((res) => {
+        if (res.data) {
+          setUserReviews(res.data);
+        }
+      });
   }
 
   return (

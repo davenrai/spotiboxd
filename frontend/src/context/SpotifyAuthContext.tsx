@@ -49,16 +49,20 @@ export const SpotifyAuthProvider = (props: {
             refreshToken: refreshToken,
           })
           .then((res) => {
+            console.log(res);
             let {
               accessToken,
               expiresIn,
-            }: { accessToken: string; expiresIn: string } = res.data;
+              token,
+            }: { accessToken: string; expiresIn: string; token: string } =
+              res.data;
             spotifyApi.setAccessToken(accessToken);
             setAuthData({
               accessToken: accessToken,
               refreshToken: refreshToken,
               expiresAt: Date.now() + parseInt(expiresIn) * 1000,
               api: spotifyApi,
+              token: token,
             });
             window.localStorage.setItem(
               "auth",
@@ -66,6 +70,7 @@ export const SpotifyAuthProvider = (props: {
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 expiresAt: Date.now() + parseInt(expiresIn) * 1000,
+                token: token,
               })
             );
           });
@@ -84,7 +89,7 @@ export const SpotifyAuthProvider = (props: {
         accessToken: tokenInfo.accessToken,
         refreshToken: tokenInfo.refreshToken,
       });
-      setAuthData({ ...tokenInfo, api: spotifyApi });
+      setAuthData({ ...tokenInfo, api: spotifyApi, token: tokenInfo.token });
     }
   }, [params]);
 
@@ -100,6 +105,7 @@ export const SpotifyAuthProvider = (props: {
           accessToken: auth.accessToken,
           refreshToken: auth.refreshToken,
           expiresAt: auth.expiresAt,
+          token: auth.token,
         })
       );
     }

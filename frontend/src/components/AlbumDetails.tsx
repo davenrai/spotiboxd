@@ -19,17 +19,24 @@ export default function AlbumDetails({
     setAlbumReview("");
     setUploadMessage("");
     setRatingSavedMessage("");
-    axios.get(`/review?user=${userId}&album=${id}`).then((res) => {
-      let review = res.data[0]?.review;
-      let track_ratings = res.data[0]?.track_ratings;
-      if (review) setAlbumReview(review);
-      if (track_ratings) {
-        console.log(track_ratings);
-        setTrackRatings(track_ratings.split(","));
-      } else {
-        setTrackRatings(new Array(tracks?.items.length).fill(0));
-      }
-    });
+    console.log(JSON.parse(window.localStorage.auth).token);
+    axios
+      .get(`/review?user=${userId}&album=${id}`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(window.localStorage.auth).token}`,
+        },
+      })
+      .then((res) => {
+        let review = res.data[0]?.review;
+        let track_ratings = res.data[0]?.track_ratings;
+        if (review) setAlbumReview(review);
+        if (track_ratings) {
+          console.log(track_ratings);
+          setTrackRatings(track_ratings.split(","));
+        } else {
+          setTrackRatings(new Array(tracks?.items.length).fill(0));
+        }
+      });
   }, [id]);
 
   function handleReviewSubmit(e) {

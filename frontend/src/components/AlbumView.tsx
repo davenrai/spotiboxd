@@ -24,7 +24,6 @@ export default function AlbumView({ api: spotifyApi, userId }) {
     spotifyApi
       ?.getMySavedAlbums({ limit: LIMIT, offset: 0 })
       .then((data) => {
-        console.log(data);
         let { items, next, previous, limit, offset, total } = data.body;
         let albums = data.body.items.map((a) => a.album);
         setUserSavedAlbums({
@@ -44,7 +43,6 @@ export default function AlbumView({ api: spotifyApi, userId }) {
     spotifyApi
       .searchAlbums(searchTerm, { limit: 10, offset: 0 })
       .then((data) => {
-        console.log(data.body);
         setSearchedAlbums({
           albums: data.body.albums.items,
           next: data.body.albums.next,

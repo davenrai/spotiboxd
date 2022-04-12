@@ -73,6 +73,7 @@ export const SpotifyAuthProvider = (props: {
                 token: token,
               })
             );
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           });
       }
     } catch (err) {
@@ -108,6 +109,7 @@ export const SpotifyAuthProvider = (props: {
           token: auth.token,
         })
       );
+      axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
     }
   }, [auth]);
 

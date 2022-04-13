@@ -156,9 +156,8 @@ app.get("/review", checkToken, (req, res) => {
   let albumId = req.query.album;
   let decodedToken = jwt.verify(req.token, SECRET, (err, authorizedData) => {
     if (err) {
-      res.send(403);
+      res.sendStatus(403);
     } else {
-      console.log("AUTHORIZED DATA", authorizedData);
       if (userId !== authorizedData.userId) {
         res.sendStatus(403);
       }

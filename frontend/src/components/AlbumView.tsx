@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Container, Form } from "react-bootstrap";
+import { Container, Form, CloseButton } from "react-bootstrap";
 import AlbumDetails from "./AlbumDetails";
 import AlbumPreview from "./AlbumPreview";
 import UserReviews from "./UserReviews";
@@ -12,13 +12,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
   const [searchTerm, setSearchTerm] = useState<string>(null);
   const [selectedAlbumId, setSelectedAlbumId] = useState<any>(null);
   const [selectedAlbumDetails, setSelectedAlbumDetails] = useState<any>(null);
-  // pass auth here as props so it's not happening in dashboard.
-  // use UseEffect to call user's saved albums
 
-  // Add a search bar to allow a user to search for an album.
-  // as default, show the user's saved albums (kinda as a starter)
-  // From there each album should have it's own component which lists
-  // it's songs (and its details), copyright, etc. (Maybe even include a player?)
   useEffect(() => {
     if (!spotifyApi) return;
     spotifyApi
@@ -103,14 +97,25 @@ export default function AlbumView({ api: spotifyApi, userId }) {
       <UserReviews userId={userId} setSelectedAlbumId={setSelectedAlbumId} />
       <Container>
         {selectedAlbumDetails && (
-          <AlbumDetails
-            userId={userId}
-            id={selectedAlbumId}
-            title={selectedAlbumDetails.name}
-            images={selectedAlbumDetails.images}
-            artists={selectedAlbumDetails.artists}
-            tracks={selectedAlbumDetails.tracks}
-          />
+          <React.Fragment>
+            <div style={{ textAlign: "right" }}>
+              <CloseButton
+                onClick={() => {
+                  setSelectedAlbumId(null);
+                  setSelectedAlbumDetails(null);
+                }}
+                variant="white"
+              />
+            </div>
+            <AlbumDetails
+              userId={userId}
+              id={selectedAlbumId}
+              title={selectedAlbumDetails.name}
+              images={selectedAlbumDetails.images}
+              artists={selectedAlbumDetails.artists}
+              tracks={selectedAlbumDetails.tracks}
+            />
+          </React.Fragment>
         )}
       </Container>
       <Form.Group className="my-3 m-auto w-50" controlId="">

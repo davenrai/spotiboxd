@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardGroup, Form, Row, Table } from "react-bootstrap";
+import { Button, Card, CardGroup, Form, Table } from "react-bootstrap";
 
 export default function AlbumDetails({
   id,
@@ -19,7 +19,6 @@ export default function AlbumDetails({
     setAlbumReview("");
     setUploadMessage("");
     setRatingSavedMessage("");
-    console.log(JSON.parse(window.localStorage.auth).token);
     axios
       .get(`/review?user=${userId}&album=${id}`, {
         headers: {

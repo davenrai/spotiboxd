@@ -9,6 +9,7 @@ export type GlobalContent = {
   expiresAt?: number;
   api?: any;
   setAuthData?(data: any): void;
+  token?: string;
 };
 
 export const SpotifyUserContext = createContext<GlobalContent>({});
@@ -22,7 +23,7 @@ export const SpotifyAuthProvider = (props: {
     | undefined;
 }) => {
   const [auth, setAuth] = useState(null);
-  const setAuthData = (data: any) => {
+  const setAuthData = (data: GlobalContent) => {
     setAuth(data);
   };
   const authContextValue = { ...auth, setAuthData };

@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Container, Table } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Container, Table } from "react-bootstrap";
 
 export default function UserReviews({ userId, setSelectedAlbumId }) {
   const [userReviews, setUserReviews] = useState(null);

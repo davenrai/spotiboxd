@@ -1,14 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
-import SpotifyWebApi from "spotify-web-api-node";
-import { SpotifyUserContext, useAuth } from "../context/SpotifyAuthContext";
+import { useEffect, useState } from "react";
 import AlbumView from "./AlbumView";
 import Nav from "./Nav";
-import Profile from "./Profile";
-import UserReviews from "./UserReviews";
 
 export default function Dashboard({ auth }) {
-  const [loading, setLoading] = useState<boolean>(true);
   const [userDetails, setUserDetails] = useState(null);
   const [showUser, setShowUser] = useState<boolean>(false);
 

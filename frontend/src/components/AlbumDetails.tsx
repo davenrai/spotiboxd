@@ -38,7 +38,7 @@ export default function AlbumDetails({
       });
   }, [id]);
 
-  function handleReviewSubmit(e) {
+  function handleReviewSubmit() {
     try {
       if (albumReview) {
         axios
@@ -130,7 +130,7 @@ export default function AlbumDetails({
             <Button
               size="sm"
               variant="secondary"
-              onClick={(e) => handleReviewSubmit(e)}
+              onClick={() => handleReviewSubmit()}
             >
               Submit
             </Button>
@@ -148,9 +148,6 @@ export default function AlbumDetails({
             </thead>
             <tbody>
               {tracks.items.map((track, index) => (
-                // <div key={track.id}>
-                //   {track.track_number} - {track.name}
-                // </div>
                 <tr key={track.id}>
                   <td>{track.track_number}</td>
                   <td>{track.name}</td>

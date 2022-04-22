@@ -10,7 +10,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
   const [userSavedAlbums, setUserSavedAlbums] = useState<any>(null);
   const [searchedAlbums, setSearchedAlbums] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState<string>(null);
-  const [selectedAlbumId, setSelectedAlbumId] = useState<any>(null);
+  const [selectedAlbumId, setSelectedAlbumId] = useState<string>(null);
   const [selectedAlbumDetails, setSelectedAlbumDetails] = useState<any>(null);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function AlbumView({ api: spotifyApi, userId }) {
     });
   }, [selectedAlbumId]);
 
-  const handlePagination = (type) => {
+  const handlePagination = (type: "previous" | "next") => {
     try {
       if (userSavedAlbums.offset === 0 && type === "previous") return;
       spotifyApi

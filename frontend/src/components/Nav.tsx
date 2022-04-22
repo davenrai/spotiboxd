@@ -1,29 +1,23 @@
-import React from "react";
 import { Button } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 
-export default function Nav({ avatar, name }) {
-  function handleLogout() {
+type NavProps = {
+  avatar: string;
+  name: string;
+};
+
+export default function Nav({ avatar, name }: NavProps) {
+  function handleLogout(): void {
     window.localStorage.removeItem("auth");
     window.location.reload();
   }
   return (
     <Navbar bg="dark" variant="dark" expand="sm">
       <Container>
-        {/* <Navbar.Brand href="/">
-          <img
-            alt=""
-            src="/logo.svg"
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-          />{" "}
-          
-        </Navbar.Brand> */}
         Spotiboxd
         <Navbar.Collapse className="justify-content-end">
-          {avatar ? (
+          {avatar && (
             <img
               src={avatar}
               style={{
@@ -32,8 +26,6 @@ export default function Nav({ avatar, name }) {
                 borderRadius: "50%",
               }}
             ></img>
-          ) : (
-            []
           )}
           <Navbar.Text>{name}</Navbar.Text>
           {name && (

@@ -1,6 +1,6 @@
 # Introduction
 
-- A small full-stack application to allow spotify users to login, track their listening activity, review albums and the tracks associated with those albums.
+- A small full-stack application to allow spotify users to login, track their listening activity, and review albums and tracks.
 - Currently hosted at https://spotiboxd.herokuapp.com/
 
 ![Dashboard](https://i.imgur.com/CKF8ogV.png)
